@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Relation: a word chart for reading Glissant</title>
+<meta name="description" content="A bilingual (English/French) vocabulary trainer for reading Édouard Glissant's Poetics of Relation.">
+<meta name="theme-color" content="#1F2F3A">
+<meta property="og:title" content="Relation: a word chart for reading Glissant">
+<meta property="og:description" content="38 philosophy and Glissant terms in English and French, with quizzes and flashcards.">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#DDE5E1; --paper-2:#E9EFEC; --ink:#1F2F3A; --ink-soft:#4C5F69;
+  --sea:#9FB8BE; --sea-line:#7E9DA5; --land:#C9A24A; --land-edge:#8C6E28;
+  --right:#3E6B4F; --wrong:#A6402F; --focus:#1F5F7A;
+  --serif:"Spectral", Georgia, "Times New Roman", serif;
+  --sans:"Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#13212A; --paper-2:#1A2C36; --ink:#DCE6E3; --ink-soft:#9DB0B4;
+    --sea:#2C4651; --sea-line:#3F606C; --land:#C9A24A; --land-edge:#E2C277;
+    --right:#7FB08F; --wrong:#E08A78; --focus:#8CC3D8;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#13212A; --paper-2:#1A2C36; --ink:#DCE6E3; --ink-soft:#9DB0B4;
+  --sea:#2C4651; --sea-line:#3F606C; --land:#C9A24A; --land-edge:#E2C277;
+  --right:#7FB08F; --wrong:#E08A78; --focus:#8CC3D8;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+header h1{font-weight:500;font-size:clamp(1.9rem,5vw,2.8rem);line-height:1.1;margin:0 0 6px;letter-spacing:-0.01em}
+header p{margin:0;color:var(--ink-soft);max-width:60ch}
+header .fr{font-style:italic}
+
+/* the chart */
+.chart{margin:26px 0 8px;border:1px solid var(--sea-line);background:var(--paper-2);position:relative}
+.chart svg{display:block;width:100%;height:auto}
+.chart .grid line{stroke:var(--sea-line);stroke-width:.5;opacity:.45}
+.island path{fill:none;stroke:var(--sea-line);stroke-width:1.2;stroke-dasharray:3 3;cursor:pointer;transition:fill .5s ease,stroke .5s ease}
+.island.charted path{fill:var(--land);stroke:var(--land-edge);stroke-dasharray:none}
+.island:focus{outline:none}
+.island:focus-visible path{stroke:var(--focus);stroke-width:2.5}
+.island.current path{stroke:var(--ink);stroke-width:2;stroke-dasharray:none}
+.links line{stroke:var(--land-edge);stroke-width:.9;opacity:.75}
+.chart-caption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--sans);font-size:.82rem;color:var(--ink-soft);margin-bottom:22px}
+.chart-caption button{font:inherit;background:none;border:none;color:var(--ink-soft);text-decoration:underline;cursor:pointer;padding:0}
+
+/* controls */
+.controls{display:grid;gap:12px;margin-bottom:22px}
+.seg{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:var(--sans);font-size:.88rem}
+.seg span.lbl{color:var(--ink-soft);min-width:5.5em}
+.seg button{font:inherit;border:1px solid var(--sea-line);background:transparent;color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* card */
+.card{border-top:2px solid var(--ink);padding-top:22px}
+.prompt-kind{font-family:var(--sans);font-size:.82rem;color:var(--ink-soft);margin:0 0 8px}
+.prompt{font-size:clamp(1.5rem,4.2vw,2.2rem);line-height:1.2;margin:0 0 4px;font-weight:500}
+.prompt.def{font-size:clamp(1.15rem,3vw,1.4rem);font-weight:400;line-height:1.45;max-width:62ch}
+.prompt-fr{font-style:italic;color:var(--ink-soft);font-size:1.15rem;margin:0 0 18px}
+.options{display:grid;gap:10px;margin-top:18px}
+.opt{text-align:left;font-family:var(--serif);font-size:1rem;line-height:1.45;color:var(--ink);background:var(--paper-2);border:1px solid var(--sea-line);padding:12px 16px;cursor:pointer;border-radius:3px}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt .ofr{font-style:italic;color:var(--ink-soft)}
+.opt.is-right{border-color:var(--right);box-shadow:inset 4px 0 0 var(--right)}
+.opt.is-wrong{border-color:var(--wrong);box-shadow:inset 4px 0 0 var(--wrong)}
+.opt:disabled{cursor:default}
+.feedback{margin-top:22px;padding:18px 20px;background:var(--paper-2);border-left:3px solid var(--land)}
+.feedback .verdict{font-family:var(--sans);font-weight:600;font-size:.92rem;margin:0 0 8px}
+.verdict.right{color:var(--right)} .verdict.wrong{color:var(--wrong)}
+.feedback h3{margin:0;font-size:1.25rem;font-weight:600}
+.feedback .tfr{font-style:italic;color:var(--ink-soft);margin:0 0 10px}
+.feedback p{margin:0 0 10px;max-width:64ch}
+.feedback .note-h{font-family:var(--sans);font-size:.82rem;color:var(--ink-soft);margin:14px 0 2px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.btn{font-family:var(--sans);font-size:.95rem;font-weight:500;padding:10px 18px;border-radius:3px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--paper)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.flip{width:100%;text-align:left;background:var(--paper-2);border:1px solid var(--sea-line);padding:28px 22px;min-height:180px;cursor:pointer;color:var(--ink);font-family:var(--serif);border-radius:3px}
+.flip .hint{font-family:var(--sans);font-size:.82rem;color:var(--ink-soft);margin-top:14px}
+.score{font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);margin-top:26px}
+@media (prefers-reduced-motion: reduce){ .island path{transition:none} }
+@media (max-width:520px){ body{font-size:17px} .seg span.lbl{min-width:100%} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Relation</h1>
+    <p>A word chart for reading Glissant's <span class="fr">Poétique de la Relation</span>. Each term you get right becomes an island, and the islands link up as you go.</p>
+  </header>
+
+  <div class="chart" aria-label="Archipelago of terms. Charted islands are terms you have answered correctly.">
+    <svg id="chart" viewBox="0 0 1000 250" role="group"></svg>
+  </div>
+  <div class="chart-caption">
+    <span id="chartCount"></span>
+    <span>Tap an island to study that word. <button id="resetBtn" type="button">Clear chart</button></span>
+  </div>
+
+  <div class="controls">
+    <div class="seg" id="modeSeg"><span class="lbl">Practice</span>
+      <button data-v="tm">Word to meaning</button>
+      <button data-v="mt">Meaning to word</button>
+      <button data-v="flash">Flashcards</button>
+    </div>
+    <div class="seg" id="langSeg"><span class="lbl">Show words</span>
+      <button data-v="en">English</button>
+      <button data-v="fr">Français</button>
+      <button data-v="both">Both</button>
+    </div>
+    <div class="seg" id="catSeg"><span class="lbl">Word set</span>
+      <button data-v="all">Everything</button>
+      <button data-v="toolkit">Philosophy toolkit</button>
+      <button data-v="glissant">Glissant's own terms</button>
+    </div>
+  </div>
+
+  <section class="card" id="card" aria-live="polite"></section>
+  <p class="score" id="score"></p>
+</div>
+
+<script>
+const TERMS = [
+// ---------- Philosophy toolkit ----------
+{id:"ontology",cat:"toolkit",en:"Ontology",fr:"l'ontologie (f.)",adj:"ontological / ontologique",
+ def:"The study of being: what exists, and what it means for something to exist at all.",
+ note:"Glissant argues that Western thought built identity on an ontology of the single root, where you are what your origin says you are. Relation is his counter-proposal: being is made in contact with others rather than fixed in advance."},
+{id:"epistemology",cat:"toolkit",en:"Epistemology",fr:"l'épistémologie (f.)",adj:"epistemological / épistémologique",
+ def:"The study of knowledge: how we come to know things, and what counts as knowing.",
+ note:"His argument for opacity is partly epistemological. He questions the assumption that to know another person or culture you must make them fully understandable on your own terms."},
+{id:"metaphysics",cat:"toolkit",en:"Metaphysics",fr:"la métaphysique",
+ def:"Inquiry into the most basic nature of reality, such as being, cause, time and unity, beyond what can be physically observed.",
+ note:"He links a metaphysics of the One (a single origin, a single creation story) to the cultures that went out to conquer, and contrasts it with the many origins of the Caribbean."},
+{id:"essentialism",cat:"toolkit",en:"Essentialism",fr:"l'essentialisme (m.)",
+ def:"The belief that a thing or a group of people has a fixed, defining core that makes it what it is.",
+ note:"Creolization and Relation are anti-essentialist ideas: Caribbean identity is something produced over time, not a hidden essence waiting to be recovered."},
+{id:"universalism",cat:"toolkit",en:"Universalism",fr:"l'universalisme (m.)",
+ def:"The claim that certain truths or values hold for everyone, everywhere.",
+ note:"Glissant distrusts a 'universal' that is really one culture's standards presented as everyone's. He prefers a whole made of real, unreduced differences."},
+{id:"other",cat:"toolkit",en:"The Other",fr:"l'Autre (m.)",
+ def:"Another person, people or culture, considered in their difference from oneself.",
+ note:"A capitalised Other signals philosophical weight. Glissant asks what happens when the Other is not just tolerated but actually changes you."},
+{id:"alterity",cat:"toolkit",en:"Alterity",fr:"l'altérité (f.)",
+ def:"Otherness: the quality of being different in a way that cannot be absorbed into sameness.",
+ note:"Accepting alterity in principle is, for Glissant, only a first step. The harder part is letting it alter you, which the French word itself hints at."},
+{id:"totality",cat:"toolkit",en:"Totality",fr:"la totalité",
+ def:"The whole, everything taken together as one.",
+ note:"Glissant wants to think the whole world without a centre. He is suspicious of 'totalising' thought that sums everything up from one privileged viewpoint."},
+{id:"dialectic",cat:"toolkit",en:"Dialectic",fr:"la dialectique",adj:"dialectical / dialectique",
+ def:"A way of reasoning in which opposing positions clash and are resolved into a higher synthesis; most associated with Hegel.",
+ note:"Hegel placed some peoples, including Africans, outside History. Glissant resists that dialectical story, and Relation never resolves into one final synthesis."},
+{id:"teleology",cat:"toolkit",en:"Teleology",fr:"la téléologie",adj:"teleological / téléologique",
+ def:"Explaining things by their end or purpose; seeing history as moving towards a set destination.",
+ note:"He rejects History with a capital H as a single line marching towards a goal, in favour of many entangled histories."},
+{id:"phenomenology",cat:"toolkit",en:"Phenomenology",fr:"la phénoménologie",
+ def:"The study of experience as it is actually lived and felt, from the inside.",
+ note:"Useful background rather than one of his key terms. His book opens with lived experience (the hold of a slave ship) rather than with abstract definitions."},
+{id:"hermeneutics",cat:"toolkit",en:"Hermeneutics",fr:"l'herméneutique (f.)",
+ def:"The theory and practice of interpretation, originally of texts, later of meaning in general.",
+ note:"Opacity sets a limit on interpretation: some things can be lived alongside without being decoded."},
+{id:"poetics",cat:"toolkit",en:"Poetics",fr:"la poétique",
+ def:"Originally the study of poetry; more broadly, a theory of how forms and meanings are made.",
+ note:"For Glissant, poetics is a way of knowing the world, not only a way of writing poems. Relation is grasped poetically, through images and resonance, rather than mapped as a system."},
+{id:"discourse",cat:"toolkit",en:"Discourse",fr:"le discours",
+ def:"An organised way of speaking and thinking about a subject that shapes what can be said about it.",
+ note:"His earlier book is Le Discours antillais (Caribbean Discourse), about how the Caribbean was spoken about, and how it might speak for itself."},
+{id:"subject",cat:"toolkit",en:"Subject",fr:"le sujet",
+ def:"In philosophy, the self that thinks, perceives and acts, as opposed to the object it thinks about.",
+ note:"Glissant's subject is never alone: it is formed in the web of Relation rather than standing apart from the world as a detached observer."},
+{id:"apriori",cat:"toolkit",en:"A priori",fr:"a priori",
+ def:"Known or assumed before, and independently of, experience.",
+ note:"Root identity works a priori: it decides who you are before any encounter. Relation identity works the other way round, from encounter outward."},
+{id:"reduction",cat:"toolkit",en:"Reduction",fr:"la réduction",adj:"reductive / réducteur",
+ def:"Simplifying something complex by bringing it down to a smaller set of terms or a single measure.",
+ note:"Glissant criticises understanding that works by reducing the Other to one's own scale. Opacity is the refusal to be reduced."},
+
+// ---------- Glissant's own terms ----------
+{id:"relation",cat:"glissant",en:"Relation",fr:"la Relation",
+ def:"The open, ever-changing web of contacts between peoples, cultures and places, in which each is shaped by the others.",
+ note:"Capitalised to mark it as a concept. It is not a relationship between two fixed things; things become what they are by relating. The French relater also means to recount, so Relation is also a telling."},
+{id:"opacity",cat:"glissant",en:"Opacity",fr:"l'opacité (f.)",
+ def:"The right not to be made fully understandable to others; the irreducible density of every person and culture.",
+ note:"He calls for 'the right to opacity' (le droit à l'opacité). Opacity is not obscurity or hiding. You can live alongside, and in solidarity with, someone you do not fully understand."},
+{id:"transparency",cat:"glissant",en:"Transparency",fr:"la transparence",
+ def:"The ideal of making the Other completely clear and knowable, usually by measuring them against one's own norms.",
+ note:"This is what opacity resists. Glissant notes that comprendre (to understand) contains prendre (to take or grasp)."},
+{id:"donneravec",cat:"glissant",en:"Giving-on-and-with",fr:"donner-avec",
+ def:"A way of relating that gives oneself alongside the other, instead of grasping the other to understand them.",
+ note:"His alternative to com-prendre. The English is the translator Betsy Wing's rendering of a French phrase that is hard to carry over."},
+{id:"creolization",cat:"glissant",en:"Creolization",fr:"la créolisation",
+ def:"The mixing of cultures in contact that produces something new and unforeseeable.",
+ note:"His model is the Caribbean, where African, European, Indigenous and Asian cultures met under violence. The key word is unpredictable: the result cannot be worked out from the ingredients."},
+{id:"metissage",cat:"glissant",en:"Métissage",fr:"le métissage",
+ def:"Mixing or blending, often of two known elements, whose result can be roughly anticipated.",
+ note:"Glissant prefers creolization because métissage suggests a predictable blend of two sources, while creolization stays open-ended."},
+{id:"errantry",cat:"glissant",en:"Errantry",fr:"l'errance (f.)",
+ def:"Wandering as a way of knowing the world through movement and encounter, without conquest or a fixed destination.",
+ note:"Not aimless drifting. The English echoes the knight-errant. Errantry is how a rhizome identity moves: it goes out to meet, not to take."},
+{id:"arrownomad",cat:"glissant",en:"Arrowlike nomadism",fr:"le nomadisme en flèche",
+ def:"The forward-thrusting movement of invaders, which ends in settlement and claims to land.",
+ note:"Glissant's image for conquest. It eventually puts down a single root and builds identity on territory and lineage."},
+{id:"circnomad",cat:"glissant",en:"Circular nomadism",fr:"le nomadisme circulaire",
+ def:"Cyclical movement driven by need, returning through the same places, as with seasonal herders.",
+ note:"Contrasted with arrowlike nomadism. It moves without seeking to conquer or own."},
+{id:"rhizome",cat:"glissant",en:"Rhizome",fr:"le rhizome",
+ def:"A root system that spreads sideways with no single centre, used as an image for identity made of many connections.",
+ note:"Borrowed from Deleuze and Guattari. Glissant stresses that a rhizome still has roots: it is a root reaching out to meet other roots, not rootlessness."},
+{id:"singleroot",cat:"glissant",en:"Single root",fr:"la racine unique",
+ def:"Identity founded on one origin, one lineage and one territory, defined by excluding others.",
+ note:"The opposite of rhizome identity. He links it to founding myths, legitimacy and the conquest of land."},
+{id:"filiation",cat:"glissant",en:"Filiation",fr:"la filiation",
+ def:"Descent along an unbroken line of parentage, used to establish legitimacy.",
+ note:"Root identity rests on filiation and legitimacy, tracing back to a first creation. Caribbean history, broken by the slave trade, cannot rest on that."},
+{id:"archipelago",cat:"glissant",en:"Archipelago",fr:"l'archipel (m.)",adj:"archipelagic / archipélique",
+ def:"A scatter of islands linked by sea, used as a model for thinking without a central mainland.",
+ note:"He contrasts archipelagic thought (la pensée archipélique) with continental thought (la pensée continentale), which organises everything around one core. The idea is developed further in his later books."},
+{id:"chaosmonde",cat:"glissant",en:"Chaos-world",fr:"le chaos-monde",
+ def:"The world in its turbulent, unpredictable interconnection, where cultures collide and combine.",
+ note:"Chaos here does not mean disorder or decline. It means an order that cannot be predicted or controlled from any one point."},
+{id:"toutmonde",cat:"glissant",en:"All-World",fr:"le Tout-monde",
+ def:"The whole world in all its diversity, as it can be felt from any one particular place.",
+ note:"Later the title of a novel and of Traité du Tout-Monde. You do not have to leave home to be in the Tout-monde; it arrives in the local."},
+{id:"abyss",cat:"glissant",en:"The abyss",fr:"le gouffre",
+ def:"The experience of the Middle Passage: the ship's hold, the depths of the sea and the unknown ahead.",
+ note:"The book opens with 'The Open Boat' (La barque ouverte). From this shared abyss, knowledge of Relation is born and can be passed on."},
+{id:"divers",cat:"glissant",en:"The Diverse",fr:"le Divers",
+ def:"Diversity understood as a living, positive force in the world, not a problem to be managed.",
+ note:"Taken from the writer Victor Segalen, whose essay on exoticism Glissant admired. Capitalised as a concept."},
+{id:"antillanite",cat:"glissant",en:"Caribbeanness",fr:"l'antillanité (f.)",
+ def:"A shared Caribbean identity grounded in the region's interconnected islands and histories.",
+ note:"Developed in Caribbean Discourse as an alternative to Négritude, which looked back to Africa as a single source."},
+{id:"trace",cat:"glissant",en:"Trace thought",fr:"la pensée de la trace",
+ def:"Non-systematic thinking that follows paths and clues, like tracks through the forest, instead of building a grand system.",
+ note:"The image recalls paths made by escaped enslaved people (maroons). More developed in his later essays, but it fits the spirit of Poetics of Relation."},
+{id:"thoughtofother",cat:"glissant",en:"Thought of the Other",fr:"la pensée de l'Autre",
+ def:"The generous willingness to accept, in principle, that others are different.",
+ note:"Glissant treats this as a moral starting point, but not enough on its own. Compare it with 'the Other of Thought'."},
+{id:"otherofthought",cat:"glissant",en:"Other of Thought",fr:"l'autre de la pensée",
+ def:"Actually being changed by difference, and acting on that change, rather than only approving of it.",
+ note:"The reversal of 'Thought of the Other'. It is where thought is itself altered, which Glissant sees as the real work."}
+];
+
+const KEY = "glissant-relation-v1";
+let state = {mode:"tm", lang:"both", cat:"all", charted:{}, right:0, asked:0};
+try { const s = JSON.parse(localStorage.getItem(KEY)||"null"); if (s) state = Object.assign(state, s); } catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+const byId = Object.fromEntries(TERMS.map(t=>[t.id,t]));
+let current = null, answered = false, flipped = false;
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function pool(){ return state.cat==="all" ? TERMS : TERMS.filter(t=>t.cat===state.cat); }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function termHTML(t, cls){
+  if (state.lang==="en") return `<span class="${cls||""}">${esc(t.en)}</span>`;
+  if (state.lang==="fr") return `<span class="${cls||""}">${esc(t.fr)}</span>`;
+  return `<span class="${cls||""}">${esc(t.en)}</span> <span class="ofr">/ ${esc(t.fr)}</span>`;
+}
+
+function pick(){
+  const p = pool();
+  const unch = p.filter(t=>!state.charted[t.id] && (!current || t.id!==current.id));
+  const rest = p.filter(t=>!current || t.id!==current.id);
+  const src = (unch.length && Math.random()<0.75) ? unch : rest;
+  return src[Math.floor(Math.random()*src.length)];
+}
+
+function next(t){ current = t || pick(); answered=false; flipped=false; render(); }
+
+function render(){
+  document.querySelectorAll(".seg").forEach(seg=>{
+    const k = {modeSeg:"mode",langSeg:"lang",catSeg:"cat"}[seg.id];
+    seg.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===state[k])));
+  });
+  const card = document.getElementById("card");
+  const t = current;
+  if (state.mode==="flash") { card.innerHTML = flashHTML(t); bindFlash(); }
+  else { card.innerHTML = quizHTML(t); bindQuiz(); }
+  drawChart();
+  const sc = document.getElementById("score");
+  sc.textContent = state.asked ? `${state.right} right out of ${state.asked} answered so far.` : "";
+}
+
+function quizHTML(t){
+  const p = pool();
+  let distract = shuffle((p.length>=4?p:TERMS).filter(x=>x.id!==t.id)).slice(0,3);
+  const opts = shuffle([t,...distract]);
+  current._opts = opts.map(o=>o.id);
+  let head;
+  if (state.mode==="tm") {
+    const main = state.lang==="fr" ? t.fr : t.en;
+    const sub = state.lang==="both" ? `<p class="prompt-fr">${esc(t.fr)}</p>` : `<p class="prompt-fr"></p>`;
+    head = `<p class="prompt-kind">What does this mean?</p><h2 class="prompt">${esc(main)}</h2>${sub}`;
+  } else {
+    head = `<p class="prompt-kind">Which word is this?</p><h2 class="prompt def">${esc(t.def)}</h2>`;
+  }
+  const list = opts.map(o=>`<button class="opt" data-id="${o.id}">${state.mode==="tm" ? esc(o.def) : termHTML(o)}</button>`).join("");
+  return `${head}<div class="options">${list}</div><div id="fb"></div>`;
+}
+
+function feedbackHTML(t, ok){
+  const v = ok===undefined ? "" : `<p class="verdict ${ok?"right":"wrong"}">${ok?"Right. Island charted.":"Not this time."}</p>`;
+  const adj = t.adj ? `<p class="tfr">Adjective: ${esc(t.adj)}</p>` : "";
+  return `<div class="feedback">${v}<h3>${esc(t.en)}</h3><p class="tfr">${esc(t.fr)}</p>${adj}<p>${esc(t.def)}</p><p class="note-h">In Glissant</p><p>${esc(t.note)}</p></div>`;
+}
+
+function bindQuiz(){
+  document.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{
+    if (answered) return; answered=true;
+    const ok = b.dataset.id===current.id;
+    state.asked++; if (ok){ state.right++; state.charted[current.id]=true; } else { delete state.charted[current.id]; }
+    save();
+    document.querySelectorAll(".opt").forEach(x=>{
+      x.disabled=true;
+      if (x.dataset.id===current.id) x.classList.add("is-right");
+      else if (x===b) x.classList.add("is-wrong");
+    });
+    const wrongNote = (!ok) ? `<p class="tfr" style="margin-top:10px">You picked: ${esc(byId[b.dataset.id].en)} (${esc(byId[b.dataset.id].fr)})</p>` : "";
+    document.getElementById("fb").innerHTML = feedbackHTML(current, ok) + wrongNote + `<div class="actions"><button class="btn" id="nextBtn">Next word</button></div>`;
+    document.getElementById("nextBtn").addEventListener("click",()=>next());
+    document.getElementById("nextBtn").focus();
+    drawChart();
+    document.getElementById("score").textContent = `${state.right} right out of ${state.asked} answered so far.`;
+  }));
+}
+
+function flashHTML(t){
+  const front = state.lang==="fr" ? `<span class="prompt">${esc(t.fr)}</span>` :
+    `<span class="prompt">${esc(t.en)}</span>${state.lang==="both"?`<br><span class="prompt-fr">${esc(t.fr)}</span>`:""}`;
+  if (!flipped) return `<p class="prompt-kind">Say the meaning to yourself, then turn the card.</p><button class="flip" id="flip">${front}<div class="hint">Turn card</div></button>`;
+  return `<p class="prompt-kind">How did you do?</p>${feedbackHTML(t)}<div class="actions"><button class="btn" id="knew">I knew it</button><button class="btn ghost" id="learning">Still learning</button></div>`;
+}
+function bindFlash(){
+  const f = document.getElementById("flip");
+  if (f) f.addEventListener("click",()=>{ flipped=true; render(); const k=document.getElementById("knew"); if(k) k.focus(); });
+  const k = document.getElementById("knew"), l = document.getElementById("learning");
+  if (k) k.addEventListener("click",()=>{ state.charted[current.id]=true; save(); next(); });
+  if (l) l.addEventListener("click",()=>{ delete state.charted[current.id]; save(); next(); });
+}
+
+// ---------- the archipelago ----------
+function rng(seed){ let s=seed>>>0; return ()=>{ s=(s*1664525+1013904223)>>>0; return s/4294967296; }; }
+const R = rng(20260704);
+const POS = [];
+TERMS.forEach((t,i)=>{
+  let tries=0, x, y;
+  do { x = 40+R()*920; y = 30+R()*190; tries++; }
+  while (tries<300 && POS.some(p=>Math.hypot(p.x-x,(p.y-y)*1.6)<70));
+  const r = 9 + R()*9, n = 9, pts=[];
+  for (let k=0;k<n;k++){ const a=k/n*Math.PI*2, rr=r*(0.65+R()*0.6); pts.push([x+Math.cos(a)*rr*1.35, y+Math.sin(a)*rr]); }
+  let d = "";
+  for (let k=0;k<n;k++){ const p=pts[k], q=pts[(k+1)%n]; const mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2;
+    if(k===0){ const z=pts[n-1]; d+=`M${((z[0]+p[0])/2).toFixed(1)},${((z[1]+p[1])/2).toFixed(1)}`; }
+    d+=` Q${p[0].toFixed(1)},${p[1].toFixed(1)} ${mx.toFixed(1)},${my.toFixed(1)}`; }
+  POS.push({id:t.id,x,y,d:d+"Z"});
+});
+
+function drawChart(){
+  const svg = document.getElementById("chart");
+  let g = '<g class="grid">';
+  for (let x=100;x<1000;x+=100) g+=`<line x1="${x}" y1="0" x2="${x}" y2="250"/>`;
+  for (let y=50;y<250;y+=50) g+=`<line x1="0" y1="${y}" x2="1000" y2="${y}"/>`;
+  g += '</g>';
+  const ch = POS.filter(p=>state.charted[p.id]);
+  const seen = new Set(); let links='<g class="links">';
+  ch.forEach(p=>{
+    ch.filter(q=>q!==p).map(q=>({q,d:Math.hypot(q.x-p.x,q.y-p.y)})).sort((a,b)=>a.d-b.d).slice(0,2).forEach(({q})=>{
+      const k=[p.id,q.id].sort().join("|"); if(seen.has(k)) return; seen.add(k);
+      links+=`<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${q.x.toFixed(1)}" y2="${q.y.toFixed(1)}"/>`;
+    });
+  });
+  links+='</g>';
+  const isl = POS.map(p=>{
+    const t=byId[p.id]; const cls=["island", state.charted[p.id]?"charted":"", current&&current.id===p.id?"current":""].join(" ");
+    return `<g class="${cls}" data-id="${p.id}" tabindex="0" role="button" aria-label="${esc(t.en)}${state.charted[p.id]?", charted":""}"><title>${esc(t.en)} / ${esc(t.fr)}</title><path d="${p.d}"/></g>`;
+  }).join("");
+  svg.innerHTML = g + links + isl;
+  svg.querySelectorAll(".island").forEach(el=>{
+    const go=()=>{ const t=byId[el.dataset.id]; if(state.cat!=="all" && t.cat!==state.cat){ state.cat="all"; save(); } next(t); document.getElementById("card").scrollIntoView({behavior:"smooth",block:"start"}); };
+    el.addEventListener("click",go);
+    el.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
+  });
+  const n = Object.keys(state.charted).filter(k=>byId[k]).length;
+  document.getElementById("chartCount").textContent = n ? `${n} of ${TERMS.length} words charted` : `${TERMS.length} words, none charted yet`;
+}
+
+// ---------- controls ----------
+document.querySelectorAll(".seg").forEach(seg=>{
+  const k = {modeSeg:"mode",langSeg:"lang",catSeg:"cat"}[seg.id];
+  seg.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    state[k]=b.dataset.v; save();
+    if (k==="cat" && current && state.cat!=="all" && current.cat!==state.cat) next(); else { answered=false; flipped=false; render(); }
+  }));
+});
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  if (!confirm("Clear your chart and score?")) return;
+  state.charted={}; state.right=0; state.asked=0; save(); render();
+});
+
+next();
+</script>
+</body>
+</html>
